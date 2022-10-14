@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Insta Clone App</string>
+    <string name="user1">_ron.weasly_</string>
+    <string name="user2">_hermiony.grenjer_</string>
+    <string name="user3">_harry.potter_</string>
+    <string name="user4">_dumble.dore_</string>
+    <string name="user5">_loona.lovegood_</string>
+    <string name="user6">_navel.longbottom_</string>
+    <string name="user7">_jinny.wealsy_</string>
+    <string name="user8">_sevrus.snape_</string>
+    <string name="user9">_tom.riddle_</string>
+    <string name="user10">_hagrid_</string>
+</resources>
