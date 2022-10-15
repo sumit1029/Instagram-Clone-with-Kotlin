@@ -1,11 +1,13 @@
 package com.example.instacloneapp
 
 import android.os.Bundle
+import android.preference.PreferenceActivity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,13 +28,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.instacloneapp.data.Datasource
+import com.example.instacloneapp.model.Chats
 import com.example.instacloneapp.model.Posts
 import com.example.instacloneapp.model.Status
 import com.example.instacloneapp.ui.theme.InstaCloneAppTheme
@@ -49,7 +54,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MainApp()
+                    Navigation()
                 }
             }
         }
@@ -57,7 +62,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HeaderBar(){
+fun HeaderBar(navController: NavController){
     Row {
         Image(painter = painterResource(id = R.drawable.insta_written), contentDescription = null,
             contentScale = ContentScale.Fit,
@@ -65,15 +70,19 @@ fun HeaderBar(){
             .padding(0.dp)
             .size(120.dp, 60.dp))
         Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+
             Icon(imageVector = Icons.Default.Add, contentDescription = null,
                 modifier = Modifier
                     .padding(12.dp, 14.dp)
                     .border(2.dp, Color.Black, RectangleShape)
-                    .size(22.dp))
+                    .size(22.dp)
+                    )
             Icon(imageVector = Icons.Default.Send, contentDescription = null,
                 modifier = Modifier
                     .padding(8.dp, 12.dp)
                     .rotate(-45f)
+                    .clickable { navController.navigate(Screen.ChatScreen.route) }
+
             )
         }
 
@@ -82,9 +91,9 @@ fun HeaderBar(){
 
 @Composable
 fun StatusCard(status: Status, modifier: Modifier = Modifier) {
-    Card(Modifier.padding(2.dp)) {
             Column(verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.background(Color(250, 250, 250))) {
                 Image(painter = painterResource(id = status.ImageResourceId), contentDescription = stringResource(
                     id = status.RestDesc
                 ),
@@ -112,13 +121,11 @@ fun StatusCard(status: Status, modifier: Modifier = Modifier) {
                     textAlign = TextAlign.Center)
                 }
             }
-
-    }
 }
 
 @Composable
 private fun StatusList(statusList: List<Status>, modifier: Modifier = Modifier) {
-    LazyRow {
+    LazyRow(Modifier.background(Color(250, 250, 250))) {
         items(statusList){status->
             StatusCard(status = status)
         }
@@ -195,12 +202,12 @@ private fun PostsList(statusList: List<Status>, postList: List<Posts>, modifier:
 }
 
 @Composable
-fun Footer() {
+fun Footer(navController: NavController) {
     val selectedIndex = remember { mutableStateOf(0) }
     BottomNavigation(modifier = Modifier,
         backgroundColor = Color.White,
         contentColor = Color.Black,
-        elevation = 10.dp) {
+        elevation = 10.dp,) {
 
         BottomNavigationItem(icon = {
             Icon(imageVector = Icons.Default.Home,"")
@@ -209,6 +216,7 @@ fun Footer() {
             selected = (selectedIndex.value == 0),
             onClick = {
                 selectedIndex.value = 0
+                navController.navigate(Screen.MainScreen.route)
             })
 
         BottomNavigationItem(icon = {
@@ -251,10 +259,10 @@ fun Footer() {
 
 
 @Composable
-fun MainApp() { 
+fun HomePage(navController: NavController) {
     Scaffold(
-        topBar = { HeaderBar()},
-        bottomBar = { Footer()}
+        topBar = { HeaderBar(navController)},
+        bottomBar = { Footer(navController)}
     ) {
         Modifier.background(color = Color.White)
 
@@ -265,11 +273,89 @@ fun MainApp() {
     }
 }
 
-
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun DefaultPreview() {
-    InstaCloneAppTheme {
-        MainApp()
+fun ChatHeader(navController: NavController){
+    Row(modifier = Modifier
+        .padding(0.dp, 0.dp, 0.dp, 0.dp)
+        .border(2.dp, Color.LightGray)
+        .fillMaxWidth(),
+    horizontalArrangement = Arrangement.Center) 
+    {
+        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
+        modifier = Modifier
+            .clickable { navController.navigate(Screen.MainScreen.route) }
+            .size(55.dp)
+            .padding(0.dp, 10.dp, 0.dp, 20.dp))
+        Spacer(modifier = Modifier.padding(35.dp, 0.dp, 35.dp, 0.dp))
+        Text(text = stringResource(id = R.string.user1), fontSize = 20.sp,
+        modifier = Modifier
+            .padding(0.dp, 10.dp, 0.dp, 20.dp))
+        Spacer(modifier = Modifier.padding(45.dp, 0.dp, 35.dp, 0.dp))
+        Icon(imageVector = Icons.Default.Star, contentDescription = null,
+            modifier = Modifier
+                .padding(0.dp, 10.dp, 15.dp, 20.dp))
     }
 }
+
+@Composable
+fun ChatCard(chat: Chats, modifier: Modifier = Modifier){
+        Row(Modifier.fillMaxWidth()) {
+            Image(painter = painterResource(id = chat.ImageResourceId), contentDescription = stringResource(
+                id = chat.RestName
+            ),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .padding(8.dp, 4.dp, 8.dp, 4.dp)
+                    .clip(CircleShape)
+                    .size(66.dp)
+                    .border(2.dp, Color.White, CircleShape)
+            )
+            Column {
+                Text(text = stringResource(id = chat.RestName))
+                Row(modifier = Modifier.fillMaxHeight(),
+                verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = stringResource(id = chat.RestDesc))
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    Text(text = chat.time)
+
+                }
+            }
+            Row(Modifier.fillMaxWidth().padding(0.dp, 20.dp, 20.dp, 0.dp),
+            horizontalArrangement = Arrangement.End) {
+                if(!chat.seen){
+                    Icon(imageVector = Icons.Filled.AddCircle, contentDescription = null,
+                        modifier = Modifier
+                            .background(Color.Blue)
+                            .clip(CircleShape)
+                            .size(5.dp)
+                            .border(6.dp, Color.Blue, CircleShape)
+                            .padding(0.dp, 50.dp, 0.dp, 0.dp))
+                }
+            }
+
+        }
+    }
+
+
+@Composable
+private fun ChatsList(chatList: List<Chats>, modifier: Modifier = Modifier) {
+    LazyColumn(Modifier.padding(2.dp, 4.dp, 0.dp, 0.dp)) {
+        items(chatList){chat->
+            ChatCard(chat = chat)
+        }
+    }
+}
+
+@Composable
+fun ChatPage(navController: NavController) {
+    Scaffold(
+        topBar = { ChatHeader(navController) },
+    )
+    {
+        ChatsList(chatList = Datasource().loadChats())
+    }
+
+}
+
+
+

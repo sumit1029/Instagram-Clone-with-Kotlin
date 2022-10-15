@@ -10,4 +10,14 @@
     <string name="user8">_sevrus.snape_</string>
     <string name="user9">_tom.riddle_</string>
     <string name="user10">_hagrid_</string>
+
+    <string name="msg1">How are you</string>
+    <string name="msg2">Repair Your Stick Soon...</string>
+    <string name="msg3">Return my Deluminator</string>
+    <string name="msg4">You are as sane as I am Ron</string>
+    <string name="msg5">Why its always me</string>
+    <string name="msg6">Hello Brother</string>
+    <string name="msg7">Where is the Potion Mr.Weasly</string>
+    <string name="msg8">The Dark Lord is back</string>
+    <string name="msg9">Have You seen bukbeek Ron</string>
 </resources>
