@@ -308,6 +308,31 @@ fun ChatHeader(navController: NavController){
     }
 }
 
+
+@Composable
+fun ProfileHeader(navController: NavController, id: Int){
+    Row(modifier = Modifier
+        .padding(0.dp, 0.dp, 0.dp, 0.dp)
+        .border(2.dp, Color.LightGray)
+        .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center)
+    {
+        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
+            modifier = Modifier
+                .clickable { navController.navigate(Screen.MainScreen.route) }
+                .size(55.dp)
+                .padding(0.dp, 10.dp, 0.dp, 20.dp))
+        Spacer(modifier = Modifier.padding(35.dp, 0.dp, 35.dp, 0.dp))
+        Text(text = stringResource(id = Datasource().profiles[id].RestName), fontSize = 20.sp,
+            modifier = Modifier
+                .padding(0.dp, 10.dp, 0.dp, 20.dp))
+        Spacer(modifier = Modifier.padding(45.dp, 0.dp, 35.dp, 0.dp))
+        Icon(imageVector = Icons.Default.Star, contentDescription = null,
+            modifier = Modifier
+                .padding(0.dp, 10.dp, 15.dp, 20.dp))
+    }
+}
+
 @Composable
 fun ChatCard(chat: Chats, modifier: Modifier = Modifier){
         Row(Modifier.fillMaxWidth()) {
@@ -499,14 +524,14 @@ fun ActivityHeader(navController: NavController){
         .padding(0.dp, 0.dp, 0.dp, 0.dp)
         .border(2.dp, Color.LightGray)
         .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center)
+        horizontalArrangement = Arrangement.Start)
     {
         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
             modifier = Modifier
                 .clickable { navController.navigate(Screen.MainScreen.route) }
                 .size(55.dp)
-                .padding(0.dp, 10.dp, 0.dp, 20.dp))
-        Spacer(modifier = Modifier.padding(35.dp, 0.dp, 35.dp, 0.dp))
+                .padding(0.dp, 15.dp, 0.dp, 20.dp))
+        Spacer(modifier = Modifier.padding(65.dp, 0.dp, 0.dp, 0.dp))
         Text(text = "Activities", fontSize = 20.sp,
             modifier = Modifier
                 .padding(0.dp, 10.dp, 0.dp, 20.dp))

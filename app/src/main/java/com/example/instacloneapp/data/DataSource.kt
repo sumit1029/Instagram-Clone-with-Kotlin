@@ -66,62 +66,62 @@ public class Datasource {
         Status(1, R.string.user1, R.drawable.post1, R.string.user1)
     )
     var list2: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(2, R.string.user2, R.drawable.post2, R.string.user1)
     )
     var list3: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(3, R.string.user3, R.drawable.post3, R.string.user1)
     )
     var list4: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(4, R.string.user4, R.drawable.post4, R.string.user1)
     )
     var list5: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(5, R.string.user5, R.drawable.post5, R.string.user1)
     )
     var list6: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(6, R.string.user6, R.drawable.post6, R.string.user1)
     )
     var list7: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(7, R.string.user7, R.drawable.post7, R.string.user1)
     )
     var list8: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(8, R.string.user8, R.drawable.post8, R.string.user1)
     )
     var list9: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(9, R.string.user9, R.drawable.post9, R.string.user1)
     )
     var list10: List<Status> = listOf(
-        Status(1, R.string.user1, R.drawable.post1, R.string.user1)
+        Status(10,R.string.user10, R.drawable.post10, R.string.user1)
     )
 
     var Feedlist1: List<Feeds> = listOf(
         Feeds(R.drawable.post1)
     )
     var Feedlist2: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post2)
     )
     var Feedlist3: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post3)
     )
     var Feedlist4: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post4)
     )
     var Feedlist5: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post5)
     )
     var Feedlist6: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post6)
     )
     var Feedlist7: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post7)
     )
     var Feedlist8: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post8)
     )
     var Feedlist9: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post9)
     )
     var Feedlist10: List<Feeds> = listOf(
-        Feeds(R.drawable.post1)
+        Feeds(R.drawable.post10)
     )
 
     var Feedlist11: List<Feeds> = listOf(
