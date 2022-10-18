@@ -14,6 +14,7 @@ import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -32,6 +33,7 @@ import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -232,6 +234,7 @@ fun Footer(navController: NavController) {
             selected = (selectedIndex.value == 1),
             onClick = {
                 selectedIndex.value = 1
+                navController.navigate(Screen.SearchScreen.route)
             })
 
         BottomNavigationItem(icon = {
@@ -491,16 +494,89 @@ fun ProfilePage(navController: NavController, id: Int) {
 }
 
 @Composable
+fun ActivityHeader(navController: NavController){
+    Row(modifier = Modifier
+        .padding(0.dp, 0.dp, 0.dp, 0.dp)
+        .border(2.dp, Color.LightGray)
+        .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center)
+    {
+        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
+            modifier = Modifier
+                .clickable { navController.navigate(Screen.MainScreen.route) }
+                .size(55.dp)
+                .padding(0.dp, 10.dp, 0.dp, 20.dp))
+        Spacer(modifier = Modifier.padding(35.dp, 0.dp, 35.dp, 0.dp))
+        Text(text = "Activities", fontSize = 20.sp,
+            modifier = Modifier
+                .padding(0.dp, 10.dp, 0.dp, 20.dp))
+    }
+}
+
+@Composable
 fun NotificationPage(navController: NavController) {
-    Scaffold(topBar = { ChatHeader(navController = navController)},
+    Scaffold(topBar = { ActivityHeader(navController = navController)},
             bottomBar = { Footer(navController = navController)}) {
         ChatsList(chatList = Datasource().loadNotification())
         
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun ShowProfile() {
-    ProfileCard(profile = Datasource().profiles[0])
+fun SearchHeader() {
+    val (value, onValueChange) = remember { mutableStateOf("") }
+
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        textStyle = TextStyle(fontSize = 17.sp),
+        leadingIcon = { Icon(Icons.Filled.Search, null, tint = Color.Gray) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .background(Color(0xFFE7F1F1), RoundedCornerShape(16.dp)),
+        placeholder = { Text(text = "Search") },
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            backgroundColor = Color.Transparent,
+            cursorColor = Color.DarkGray
+        )
+    )
 }
+
+@Composable
+fun SearchArrange() {
+    Row {
+        LazyColumn {
+            items(Datasource().Feedlist11){post->
+                FeedsCards(feed = post)
+            }
+        }
+        LazyColumn {
+            items(Datasource().Feedlist11){post->
+                FeedsCards(feed = post)
+            }
+        }
+        LazyColumn {
+            items(Datasource().Feedlist11){post->
+                FeedsCards(feed = post)
+            }
+        }
+
+    }
+}
+
+@Composable
+fun SearchPage(navController: NavController) {
+    Scaffold(topBar = { SearchHeader()},
+        bottomBar ={ Footer(navController = navController) }) {
+         SearchArrange()
+    }
+}
+
+//@Preview(showSystemUi = true, showBackground = true)
+//@Composable
+//fun ShowProfile() {
+//
+//}

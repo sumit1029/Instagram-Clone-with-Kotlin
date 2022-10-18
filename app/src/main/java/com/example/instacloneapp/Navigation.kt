@@ -27,5 +27,8 @@ fun Navigation() {
         composable(route = Screen.ActivityScreen.route){
             NotificationPage(navController = navController)
         }
+        composable(route = Screen.SearchScreen.route){
+            SearchPage(navController = navController)
+        }
     }
 }
