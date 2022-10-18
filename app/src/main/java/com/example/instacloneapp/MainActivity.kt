@@ -1,7 +1,9 @@
 package com.example.instacloneapp
 
+import android.content.ClipData
 import android.os.Bundle
 import android.preference.PreferenceActivity
+import android.widget.GridLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -10,9 +12,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,10 +37,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.instacloneapp.data.Datasource
-import com.example.instacloneapp.model.Chats
-import com.example.instacloneapp.model.Posts
-import com.example.instacloneapp.model.Status
+import com.example.instacloneapp.model.*
 import com.example.instacloneapp.ui.theme.InstaCloneAppTheme
 import org.intellij.lang.annotations.JdkConstants
 import javax.sql.DataSource
@@ -133,7 +133,7 @@ private fun StatusList(statusList: List<Status>, modifier: Modifier = Modifier) 
 }
 
 @Composable
-fun PostCard(post: Posts, modifier: Modifier = Modifier) {
+fun PostCard(navController: NavController, post: Posts, modifier: Modifier = Modifier) {
     Card(Modifier.padding(0.dp), elevation = 14.dp) {
         Column {
             Row(horizontalArrangement = Arrangement.Center,
@@ -143,9 +143,15 @@ fun PostCard(post: Posts, modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .padding(4.dp)
                         .clip(CircleShape)
-                        .size(26.dp))
+                        .size(26.dp)
+                        .clickable {
+                            navController.navigate(Screen.ProfileScreen.withArgs(post.id))
+                        })
                 Text(text = stringResource(id = post.RestName), textAlign = TextAlign.Center, fontSize = 14.sp,modifier = Modifier
-                    .padding(4.dp, 0.dp, 0.dp, 10.dp))
+                    .padding(4.dp, 0.dp, 0.dp, 10.dp)
+                    .clickable {
+                        navController.navigate(Screen.ProfileScreen.withArgs(post.id))
+                    })
 
                 Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End){
@@ -189,21 +195,21 @@ fun PostCard(post: Posts, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PostsList(statusList: List<Status>, postList: List<Posts>, modifier: Modifier = Modifier) {
+private fun PostsList(navController: NavController, statusList: List<Status>, postList: List<Posts>, modifier: Modifier = Modifier) {
     LazyColumn() {
 
         item {
             StatusList(statusList = statusList)
         }
         items(postList){post->
-            PostCard(post = post)
+            PostCard(navController, post = post)
         }
     }
 }
 
 @Composable
 fun Footer(navController: NavController) {
-    val selectedIndex = remember { mutableStateOf(0) }
+    val selectedIndex = rememberSaveable{ mutableStateOf(0) }
     BottomNavigation(modifier = Modifier,
         backgroundColor = Color.White,
         contentColor = Color.Black,
@@ -240,10 +246,11 @@ fun Footer(navController: NavController) {
         BottomNavigationItem(icon = {
             Icon(imageVector = Icons.Default.Favorite,"")
         },
-            label = { Text(text = "Favorite") },
+            label = { Text(text = "Activity") },
             selected = (selectedIndex.value == 3),
             onClick = {
                 selectedIndex.value = 3
+                navController.navigate(Screen.ActivityScreen.route)
             })
 
         BottomNavigationItem(icon = {
@@ -253,6 +260,7 @@ fun Footer(navController: NavController) {
             selected = (selectedIndex.value == 4),
             onClick = {
                 selectedIndex.value = 4
+                navController.navigate(Screen.ProfileScreen.withArgs(0))
             })
     }
 }
@@ -268,7 +276,7 @@ fun HomePage(navController: NavController) {
 
         Column(modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 0.dp)) {
 //            StatusList(statusList = Datasource().loadStatus())
-             PostsList(statusList = Datasource().loadStatus(), postList = Datasource().loadPosts())
+             PostsList(navController, statusList = Datasource().loadStatus(), postList = Datasource().loadPosts())
         }
     }
 }
@@ -320,7 +328,10 @@ fun ChatCard(chat: Chats, modifier: Modifier = Modifier){
 
                 }
             }
-            Row(Modifier.fillMaxWidth().padding(0.dp, 20.dp, 20.dp, 0.dp),
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 20.dp, 20.dp, 0.dp),
             horizontalArrangement = Arrangement.End) {
                 if(!chat.seen){
                     Icon(imageVector = Icons.Filled.AddCircle, contentDescription = null,
@@ -357,5 +368,139 @@ fun ChatPage(navController: NavController) {
 
 }
 
+@Composable
+fun FeedsCards(feed: Feeds) {
+    Image(painter = painterResource(id = feed.ImageResourceId), contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .size(125.dp, 125.dp)
+            .padding(0.dp, 0.dp, 2.dp, 2.dp))
+}
 
 
+@Composable
+fun ProfileCard(profile: Profiles, modifier: Modifier = Modifier) {
+        LazyColumn(Modifier.padding(0.dp, 15.dp, 0.dp, 0.dp)) {
+            item { 
+                Row(Modifier.fillMaxWidth()) {
+                    Image(painter = painterResource(id = profile.ImageResourceId), contentDescription = stringResource(
+                        id = profile.RestDesc
+                    ),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .padding(8.dp, 4.dp, 8.dp, 4.dp)
+                            .clip(CircleShape)
+                            .size(96.dp)
+                            .border(2.dp, Color.White, CircleShape))
+                    Column(
+                    horizontalAlignment = Alignment.End) {
+                        Text(text = stringResource(id = profile.RestName), fontSize = 25.sp, modifier =
+                        Modifier
+                            .padding(0.dp, 0.dp, 20.dp, 0.dp), textAlign = TextAlign.Center)
+                        Row(
+                            Modifier
+                                .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                                .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End) {
+                            Card(Modifier.padding(0.dp, 0.dp, 15.dp, 0.dp), elevation = 4.dp) {
+                                Text(text = "Message", fontSize = 18.sp, modifier =
+                                Modifier.padding(35.dp, 2.dp, 35.dp, 2.dp))
+                            }
+                            Card(Modifier.padding(0.dp, 0.dp, 20.dp, 0.dp),elevation = 4.dp) {
+                                Icon(imageVector = Icons.Default.Person, contentDescription = null,
+                                modifier = Modifier
+                                    .size(25.dp)
+                                    .padding(4.dp))
+                            }
+                            Card(Modifier.padding(0.dp, 0.dp, 20.dp, 0.dp),elevation = 4.dp) {
+                                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null,
+                                modifier = Modifier
+                                    .size(25.dp)
+                                    .padding(4.dp))
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                Column(Modifier.padding(4.dp, 20.dp, 0.dp, 10.dp)) {
+                    Text(text = stringResource(id = profile.About), fontSize = 16.sp)
+                }
+            }
+
+            item {
+                Row(Modifier.padding(4.dp, 10.dp, 0.dp, 20.dp)) {
+                    StatusList(statusList = profile.HignLights)
+                }
+
+            }
+
+            item {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)) {
+                    Column(Modifier.padding(35.dp, 0.dp, 35.dp, 0.dp), horizontalAlignment = Alignment.Start) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = profile.NoOfPosts.toString(), textAlign = TextAlign.Center)
+                            Text(text = "posts", textAlign = TextAlign.Center)
+                        }
+
+                    }
+                    Column(Modifier.padding(25.dp, 0.dp, 25.dp, 0.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = profile.NoOfFollowers, textAlign = TextAlign.Center)
+                            Text(text = "followers", textAlign = TextAlign.Center)
+                        }
+
+                    }
+                    Column(Modifier.padding(25.dp, 0.dp, 35.dp, 0.dp), horizontalAlignment = Alignment.End) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = profile.NoOfFollwing.toString(), textAlign = TextAlign.Center)
+                            Text(text = "following", textAlign = TextAlign.Center)
+                        }
+
+                    }
+                }
+            }
+
+            item {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)) {
+                    Icon(imageVector = Icons.Default.List, contentDescription = null)
+                }
+            }
+
+            items(profile.posts){post->
+                FeedsCards(feed = post)
+            }
+        }
+}
+
+@Composable
+fun ProfilePage(navController: NavController, id: Int) {
+    Scaffold(
+        topBar = { ChatHeader(navController = navController)},
+        bottomBar = { Footer(navController = navController)}
+    ) {
+        ProfileCard(profile = Datasource().profiles[id])
+    }
+}
+
+@Composable
+fun NotificationPage(navController: NavController) {
+    Scaffold(topBar = { ChatHeader(navController = navController)},
+            bottomBar = { Footer(navController = navController)}) {
+        ChatsList(chatList = Datasource().loadNotification())
+        
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+fun ShowProfile() {
+    ProfileCard(profile = Datasource().profiles[0])
+}
